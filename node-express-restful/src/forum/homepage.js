@@ -479,7 +479,8 @@ router
         articleId + ".json",
         memberId,
         0,
-        Math.floor(Math.random() * 60 + 1),
+        // Math.floor(Math.random() * 60 + 1),
+        0,
         Math.floor(Math.random() * 1000 + 1),
         time
       ],
