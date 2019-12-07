@@ -6,7 +6,7 @@ const upload = multer({ dest: "tmp_uploads/" }); //圖片上傳
 const fs = require("fs"); //檔案處理
 const moment = require("moment-timezone");
 const db = mysql.createConnection({
-  host: "192.168.27.186", 
+  host: "localhost", 
   user: "root",
   password: "root",
   database: "pbook"
