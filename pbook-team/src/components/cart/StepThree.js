@@ -52,7 +52,7 @@ const StepThree = props => {
               <div className="m-4 d-flex align-items-center tableTop">
                 <div className="picName">商品明細</div>
                 <div className="bookAmount">數量</div>
-                <div className="bookPrice">價格</div>
+                <div className="bookPrice">單價</div>
               </div>
               {props.order.payload &&
                 props.order.payload &&

@@ -41,7 +41,7 @@ function MemberArticleList() {
         return response.json()
       })
       .then(result => {
-        console.log(result)
+        // console.log(result)
         setRows(result)
       })
   }

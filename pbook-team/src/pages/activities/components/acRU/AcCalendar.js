@@ -12,6 +12,7 @@ import FullCalendar from '@fullcalendar/react'
 import './acCalendar.scss'
 import $ from 'jquery'
 import 'bootstrap'
+import moment from 'moment'
 
 function AcCalendar(props) {
   useEffect(() => {
@@ -23,7 +24,7 @@ function AcCalendar(props) {
       return {
         id: v.sid,
         title: v.title,
-        start: v.date.substr(0, 10),
+        start: moment(v.date).format(),
         url: "javascript: window.open('../activities/offline/" + v.acId + "')",
         description: `時間：${v.date.substr(0, 10)}<br/>地點：${
           v.location
@@ -52,6 +53,7 @@ function AcCalendar(props) {
             el.dataset.toggle = 'popover'
             el.dataset.trigger = 'hover'
             el.dataset.placement = 'top'
+            el.dataset.container = '.acCalendarContainer'
             el.dataset.html = 'true'
             el.dataset.content = eventObj.event.extendedProps.description
             el.setAttribute('title', eventObj.event.title)

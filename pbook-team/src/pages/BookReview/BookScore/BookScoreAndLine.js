@@ -62,7 +62,7 @@ const BookScore = props => {
 
   const classes = useStyles()
   function countRate(bs) {
-    for (let j = 1; j <= 124; j++) {
+    for (let j = 1; j <= 1002; j++) {
       fiveStars[j] = 0
       fourStars[j] = 0
       threeStars[j] = 0
@@ -92,7 +92,7 @@ const BookScore = props => {
         }
       }
     }
-    for (let j = 1; j <= 124; j++) {
+    for (let j = 1; j <= 1002; j++) {
       avg[j] = (
         (fiveStars[j] * 5 +
           fourStars[j] * 4 +

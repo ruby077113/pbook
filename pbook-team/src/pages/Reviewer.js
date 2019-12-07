@@ -2,6 +2,7 @@ import React from 'react'
 import BR_ReviewerList from './reviewer_page/BR_ReviewerList'
 import BR_Navbar from './reviewer_page/BR_Navbar'
 import axios from 'axios'
+
 // 書評家使用的CSS
 import '../pages/reviewer_page/BR_Bookcase.css'
 import '../pages/reviewer_page/BR_Reviewer.css'
@@ -18,21 +19,34 @@ export class Reviewer extends React.Component {
   componentDidMount() {
     axios
       .get('http://localhost:5555/reviewer/brReviewerList')
-      .then(({ data: {rows:brData }}) => {
+      .then(({ data: { rows: brData } }) => {
         this.setState({ brData })
       })
   }
 
   render() {
+    console.log(this.state.brData)
     if (this.state.brData.length === 0)
-      return <h1 className="h1_br">取得資料中...</h1>
-    console.log('所有的書評家', this.state.brData)
+      return (
+        <>
+          <h1 className="h1_br">
+            取得資料中...
+            <img
+              className="loadingGif"
+              src={require('./reviewer_page/images/ani_LoadingPBook.gif')}
+              alt=""
+            />
+          </h1>
+        </>
+      )
 
     return (
+      // <div className="HotBookBoxAll_Light">
+      // <div className="bg_black">
       <div className="br_bg">
         <>
-          <BR_Navbar />
-          <h1>書評家</h1>
+          <BR_Navbar data={this.state.brData} />
+          <h1>　</h1>
           <div className="bg_pic">
             {this.state.brData.map(
               ({
@@ -70,6 +84,8 @@ export class Reviewer extends React.Component {
           </div>
         </>
       </div>
+      // </div>
+      // </div>
     )
   }
 }

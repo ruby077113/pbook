@@ -244,6 +244,7 @@ router.post('/queryReviewer/:page', (req, res)=>{
 router.post('/addBookcase', (req, res)=>{
     let number = req.body.number
     let isbn = req.body.isbn
+    let bookSid = req.body.bookSid
     let sql = `SELECT COUNT(1) total FROM br_bookcase WHERE number = '${number}' && isbn = '${isbn}'`
     db.queryAsync(sql)
         .then( row => {
@@ -255,8 +256,8 @@ router.post('/addBookcase', (req, res)=>{
                 return
             }else{
                 //新增書籍到書櫃
-                let sql = `INSERT INTO br_bookcase(number, isbn, title, bookName, blog, created_time) 
-                            VALUES('${number}', '${isbn}', '', '', '',now()) `
+                let sql = `INSERT INTO br_bookcase(number, isbn, bookSid, title, bookName, blog, created_time) 
+                            VALUES('${number}', '${isbn}', '${bookSid}', '', '', '',now()) `
                 return db.queryAsync(sql)
                 }
             })

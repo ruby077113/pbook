@@ -27,14 +27,14 @@ function AcSign(props) {
       .then(res => res.json())
       .then(response => {
         props.handleClose()
-        setResult(response)
         swal(
-          +result.type ? '報名成功' : '報名失敗',
-          +result.type
+          +response.type ? '報名成功' : '報名結果',
+          +response.type
             ? '活動 ' + props.title + ' 報名成功'
-            : result.description,
-          +result.type ? 'success' : 'error'
+            : response.description,
+          +response.type ? 'success' : 'info'
         )
+        setResult(response)
       })
       .catch(err => console.log(err))
   }

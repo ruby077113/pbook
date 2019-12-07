@@ -2,21 +2,25 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import './acItem.scss'
+import WOW from 'wowjs'
 
 function AcItemOffline(props) {
+  React.useEffect(() => {
+    try {
+      new WOW.WOW().init()
+    } catch (err) {}
+  })
   return (
     <>
-      <div className="acItem row mt-3">
+      <div className="acItem row mt-3 wow fadeIn">
         <figure className="acImg col-md-4">
           {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
           <Link
             to={'/activities/' + props.acType + '/' + props.sid}
             className="img"
-            style={{
-              backgroundImage:
-                "url('http://localhost:5555/ac/images/" + props.img + "')",
-            }}
-          ></Link>
+          >
+            <img src={'http://localhost:5555/ac/images/' + props.img}></img>
+          </Link>
         </figure>
         <section className="acContent col-md-6">
           {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}

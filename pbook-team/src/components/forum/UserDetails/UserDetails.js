@@ -5,9 +5,36 @@ import { connect } from 'react-redux'
 //material UI
 import StarsIcon from '@material-ui/icons/Stars'
 import Button from '@material-ui/core/Button'
+import avatar from './s2.jpg'
 
 //props : memberId={fm_memberId} read={true}//閱讀人數是否顯示 article={article} //文章資料
 
+let a = {
+  writer: {
+    sid: 3,
+    MR_number: 'MR00010',
+    MR_name: '人名10',
+    MR_password: '999',
+    MR_nickname: '地方媽媽',
+    MR_email: '999@gmail.com',
+    MR_gender: 1,
+    MR_birthday: '2019-08-20',
+    MR_mobile: '0955111222',
+    MR_career: '213',
+    MR_address: '台北市',
+    MR_pic: 'hello.jpg',
+    tokenId: null,
+    MR_introduction:
+      '習慣了單身的生活，對兩性交往已經沒有太多的慾望，沒有感情的憧憬，沒了愛情的願景，一個人麻木的過著沒有目的的生活聊天，單身不可怕，只要你保持著有想要脫離的心，永遠都有機會，今年我不想要再一個人了!!',
+    MR_imageloactionX: null,
+    MR_imageloactionY: 0,
+    MR_personLevel: 5,
+    MR_createdDate: '2019-08-08T16:00:00.000Z',
+    categoriesName: '藝術設計',
+    parent_sid: 0,
+  },
+  follow: 0,
+}
 class UserDetails extends React.Component {
   constructor(props) {
     super(props)
@@ -48,6 +75,9 @@ class UserDetails extends React.Component {
           follow: result.follow,
         })
       })
+      .catch(error => {
+        console.log('e拿資料時有錯誤', error)
+      })
   }
 
   handleCategoryClick = event => {
@@ -76,14 +106,16 @@ class UserDetails extends React.Component {
     } else {
       let article = this.props.article
       let user = this.state.data
-
+      let src = `http://localhost:5555/images/member/${
+        user.MR_pic ? user.MR_pic : avatar
+      }`
       return (
         <>
           <div>{this.props.userHover}</div>
           <div className="card-details">
             <img
               className="card-details-img "
-              src={'http://localhost:5555/images/member/' + user.MR_pic}
+              src={src}
               alt=""
               onClick={this.handleUserClick}
             />
@@ -121,7 +153,7 @@ class UserDetails extends React.Component {
                     <div className="subtitle">
                       從
                       <span className="m-1">
-                        {user.MR_createdDate.slice(0, 10)}{' '}
+                        {user.MR_createdDate.slice(0, 10)}
                       </span>
                       成為品書會員
                     </div>

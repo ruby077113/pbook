@@ -14,13 +14,23 @@ const BookDetail = props => {
     props.bookInfoPayload &&
     props.bookInfoPayload.rows &&
     props.bookInfoPayload.rows[0]
-  let discount
-  discount =
+  let discount =
     props.discountAmount &&
     props.discountAmount.data &&
     props.discountAmount.data[0].discount
-  if (!discount) return 'loading'
-
+  if (!discount)
+    return (
+      <>
+        <h4>
+          取得資料中...
+          <img
+            className="loadingGif"
+            src={require('./ani_LoadingPBook.gif')}
+            alt=""
+          />
+        </h4>
+      </>
+    )
   return (
     <>
       <Col md={5}>
@@ -31,7 +41,7 @@ const BookDetail = props => {
           <div className="my-3 d-flex">
             <div className="marks d-flex align-items-center justify-content-center mr-3">
               <FontAwesomeIcon icon={faBookmark} className="mr-2" />
-              <span className="fav">76</span>收藏
+              <span className="fav">{props.favoriteNumPayload}</span>收藏
             </div>
             <div className="marks d-flex align-items-center justify-content-center mr-3">
               <FontAwesomeIcon icon={faBookmark} className="mr-2" />

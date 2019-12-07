@@ -195,12 +195,12 @@ class Listitem extends React.Component {
         <>
           <div className="forum-list-item dis-flex">
             <div className="item-left">
-              <div className="list-item-category loading"></div>
-              <div className="card-title-font loading">Loading</div>
-              <div className="card-subtitle-font fm-subtitle loading"></div>
-              <div className="list-item-details loading"></div>
-              <div className="list-item-time dis-flex loading">
-                <div className="loading">
+              <div className="list-item-category loadinglist "></div>
+              <div className="card-title-font loadinglist ">Loading</div>
+              <div className="card-subtitle-font fm-subtitle loadinglist "></div>
+              <div className="list-item-details loadinglist "></div>
+              <div className="list-item-time dis-flex loadinglist ">
+                <div className="loadinglist ">
                   <span></span>
                   <span></span>
                 </div>
@@ -220,7 +220,7 @@ class Listitem extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="item-right loading">
+            <div className="item-right loadinglist">
               <img className="img" src="" alt="" />
             </div>
           </div>

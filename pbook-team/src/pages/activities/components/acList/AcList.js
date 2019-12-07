@@ -3,9 +3,8 @@ import AcItem from './AcItem'
 import AcListHeader from './AcListHeader'
 import './acList.scss'
 import { connect } from 'react-redux'
-// import { acFetch } from '../../AcActions'
 import { fetchAcList } from '../../AcActions'
-// import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import AcBreadCrumb from '../AcBreadCrumb'
 
 const AcList = props => {
   let acType = props.match.params.acType
@@ -13,9 +12,14 @@ const AcList = props => {
     props.dispatch(fetchAcList(acType))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.match.params.acType])
-
+  let bread = [{ text: '首頁', url: '/' }]
+  bread.push({
+    text: acType === 'offline' ? '實體活動' : '優惠活動',
+    url: '/activities/' + acType,
+  })
   return (
     <>
+      <AcBreadCrumb bread={bread} />
       <div className="container acList">
         <AcListHeader />
         <div className="my-2 py-2" style={{ borderTop: '1px solid #ccc' }}>

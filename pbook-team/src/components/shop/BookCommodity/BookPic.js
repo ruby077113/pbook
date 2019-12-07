@@ -7,8 +7,19 @@ const BookPic = props => {
     props.bookInfoPayload &&
     props.bookInfoPayload.rows &&
     props.bookInfoPayload.rows[0]
-  if (!(data && data.pic)) return 'loading'
-
+  if (!(data && data.pic))
+    return (
+      <>
+        <h4>
+          取得資料中...
+          <img
+            className="loadingGif"
+            src={require('./ani_LoadingPBook.gif')}
+            alt=""
+          />
+        </h4>
+      </>
+    )
   return (
     <>
       <Col md={4}>

@@ -195,6 +195,19 @@ io.sockets.on("connection", function (socket) {
     io.sockets.emit("SeverToClientInsertMemo", oldDataMemo);
   })
 
+  socket.on("clientToSeverInsertAlbum", async function (data) {
+    console.log("clientToSeverInsertAlbum 服務器端收到客戶端資料", data);
+    await db.queryAsync(
+      `INSERT INTO mb_chatablum( chat_id, myFrom, myTo, content, myDelete) VALUES ("${data.chat_id}","${data.myFrom}","${data.myTo}","${data.content}","${data.myDelete}")`
+    );
+
+    const oldDataAlbum = await db.queryAsync(
+      `SELECT * FROM mb_chatablum WHERE (myFrom = "${data.myFrom}" OR myTo = "${data.myFrom}") AND myDelete = 0 ORDER BY sid DESC`
+    );
+
+    io.sockets.emit("SeverToClientInsertAlbum", oldDataAlbum);
+  })
+
   socket.on("clientToSeverMemoDelete", async function (data) {
     console.log("clientToSeverMemoDelete 服務器端收到客戶端資料", data);
     await db.queryAsync(

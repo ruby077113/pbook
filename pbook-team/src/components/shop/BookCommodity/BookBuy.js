@@ -7,13 +7,15 @@ import Rating from '@material-ui/lab/Rating'
 import Box from '@material-ui/core/Box'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faShoppingCart, faBookmark } from '@fortawesome/free-solid-svg-icons'
-import { letMeLogin } from '../../../pages/Forum/fmAction'
 import {
   addToFavFetch,
+  delFavFetch,
   addToCartFetch,
   addCartToOrder,
   cartFetch,
+  favoriteFetch,
 } from '../ShopActions'
+import { letMeLogin } from '../../../pages/Forum/fmAction'
 import './BookCommodity.scss'
 
 const BookBuy = props => {
@@ -21,14 +23,73 @@ const BookBuy = props => {
     props.bookInfoPayload &&
     props.bookInfoPayload.rows &&
     props.bookInfoPayload.rows[0]
-  let discount
-  discount =
+  let discount =
     props.discountAmount &&
     props.discountAmount.data &&
     props.discountAmount.data[0].discount
-  if (!discount) return 'loading'
+
+  if (!discount)
+    return (
+      <>
+        <h4>
+          取得資料中...
+          <img
+            className="loadingGif"
+            src={require('./ani_LoadingPBook.gif')}
+            alt=""
+          />
+        </h4>
+      </>
+    )
+
   let totalAmount = props.cartToOrder.totalAmount
   let totalPrice = props.cartToOrder.totalPrice
+  let isbn = data && data.isbn
+  let sid = data && data.sid
+  let memberID
+  let favIndex
+  if (!localStorage.getItem('user')) {
+    memberID = 'MR00174'
+    favIndex = -1
+  } else {
+    if (!props.favoritePayload)
+      return (
+        <>
+          <h4>
+            取得資料中...
+            <img
+              className="loadingGif"
+              src={require('./ani_LoadingPBook.gif')}
+              alt=""
+            />
+          </h4>
+        </>
+      )
+    memberID = JSON.parse(localStorage.getItem('user')).MR_number
+    favIndex = (props.favoritePayload && props.favoritePayload).findIndex(
+      favorite => +favorite.isbn === isbn
+    )
+  }
+  function goCart() {
+    let cart = props.cartPayload && props.cartPayload.cart
+    let sid = data && data.sid
+    let index = cart.findIndex(carts => carts.sid === sid)
+    if (index !== -1) {
+      props.history.push(`/cart`)
+    } else if (index === -1) {
+      props.dispatch(
+        addToCartFetch(
+          sid,
+          parseInt(((data && data.fixed_price) * (100 - discount)) / 100)
+        )
+      )
+      localStorage.setItem(sid, 1)
+      props.dispatch(
+        addCartToOrder(totalAmount + 1, totalPrice + (data && data.fixed_price))
+      )
+      props.history.push(`/cart`)
+    }
+  }
   function addCart() {
     let cart = props.cartPayload && props.cartPayload.cart
     let sid = data && data.sid
@@ -60,35 +121,30 @@ const BookBuy = props => {
     }
   }
   function addFav() {
-    let memberID = JSON.parse(localStorage.getItem('user')).MR_number
-    let isbn = data && data.isbn
-    props.dispatch(addToFavFetch(memberID, isbn))
-    // console.log(props.addToFav.payload && props.addToFav.payload.message)
-    swal({
-      text: '加入收藏成功',
-      icon: 'success',
-      button: 'OK',
-    })
-  }
-  // function delFav() {
-  //   let memberID = JSON.parse(localStorage.getItem('user')).MR_number
-  //   let isbn = data && data.isbn
-  //   props.dispatch(addToFavFetch(memberID, isbn))
-  // localStorage.setItem('favState', JSON.stringify({ isbn: isbn, state: 0 }))
-  // swal({
-  //   text: '取消收藏成功',
-  //   icon: 'success',
-  //   button: 'OK',
-  // })
-  // }
-  function goCart() {
     if (localStorage.user !== undefined) {
-      props.history.push(`/cart`)
+      //有登入
+      props.dispatch(addToFavFetch(memberID, isbn, sid))
+      swal({
+        text: '加入收藏成功',
+        icon: 'success',
+        button: 'OK',
+      }).then(() => {
+        props.dispatch(favoriteFetch(memberID))
+      })
     } else {
       props.dispatch(letMeLogin())
     }
   }
-
+  function delFav() {
+    props.dispatch(delFavFetch(memberID, isbn))
+    swal({
+      text: '取消收藏成功',
+      icon: 'success',
+      button: 'OK',
+    }).then(() => {
+      props.dispatch(favoriteFetch(memberID))
+    })
+  }
   return (
     <>
       <Col md={3} className="d-flex flex-column">
@@ -100,17 +156,17 @@ const BookBuy = props => {
           <FontAwesomeIcon icon={faShoppingCart} className="mr-2" />
           加入購物車
         </button>
-        {/* {+props.favState !== 1 ? ( */}
-        <button className="addFav my-2" onClick={() => addFav()}>
-          <FontAwesomeIcon icon={faBookmark} className="mr-2" />
-          加入收藏
-        </button>
-        {/* ) : (
+        {favIndex === -1 ? (
+          <button className="addFav my-2" onClick={() => addFav()}>
+            <FontAwesomeIcon icon={faBookmark} className="mr-2" />
+            加入收藏
+          </button>
+        ) : (
           <button className="addFav my-2" onClick={() => delFav()}>
             <FontAwesomeIcon icon={faBookmark} className="mr-2" />
             取消收藏
           </button>
-        )} */}
+        )}
         <div className="d-flex book_star my-3 flex-column">
           <div className="d-flex flex-column align-items-center">
             <span className="book_rank">{data && data.avg}</span>
@@ -135,12 +191,10 @@ const BookBuy = props => {
 }
 
 const mapStateToProps = state => ({
-  loginOrNot: state.letMeLogin.loginOrNot,
   addToFav: state.addToFav,
   addToCart: state.addToCart,
   cartToOrder: state.cartToOrder,
   Cart: state.Cart,
+  favorite: state.favorite,
 })
-
-// redux(state)綁定到此元件的props、dispatch方法自動綁定到此元件的props
 export default connect(mapStateToProps)(BookBuy)

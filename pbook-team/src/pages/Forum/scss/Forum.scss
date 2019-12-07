@@ -56,6 +56,11 @@ html {
     font-size: 1.2rem;
     color: $black-tea;
     text-decoration: underline;
+    &:hover {
+      opacity: 0.7;
+      color: #ffc408;
+      text-shadow: -1px 0 1px $black-tea;
+    }
   }
   .forum-list-wrapper {
     min-width: 370px;

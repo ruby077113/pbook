@@ -641,7 +641,7 @@ class Login extends React.Component {
                   alt=""
                   style={{ maxWidth: '120px', marginTop: '175px', cursor: 'pointer' }}
                   onClick={() => {
-                    window.location.href = '/'
+                    window.location = window.location.href
                   }}
                 />
                 <h4 style={{ margin: '80px' }}>
@@ -659,7 +659,7 @@ class Login extends React.Component {
                   style={{ width: '120px', marginTop: '200px', cursor: 'pointer' }}
                   
                   onClick={() => {
-                    window.location.href = '/'
+                    window.location = window.location.href
                   }}
                 />
                 <button

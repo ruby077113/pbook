@@ -14,7 +14,7 @@ db.connect();
 bluebird.promisifyAll(db);
 
 //分類
-router.post("/categoryBar", (req, res) => {
+router.get("/categoryBar", (req, res) => {
   const sql = "SELECT * FROM `vb_categories` WHERE 1";
   db.query(sql, (error, results) => {
     if (error) {
@@ -46,13 +46,13 @@ router.get(`/?`, (req, res) => {
   s = urlpart.query.s || "";
 
   page = urlpart.query.p || 1;
-  let perPage = 10;
+  let perPage = 15;
   let output = {};
   db.queryAsync(`SELECT COUNT(1) total FROM vb_books WHERE categories ${c}`)
     .then(results => {
       output.total = results[0].total;
       return db.queryAsync(
-        `SELECT * FROM vb_books WHERE categories ${c} AND name LIKE '%${s}%' ORDER BY ${a} DESC LIMIT ${(page -
+        `SELECT vb_books.*,cp_data_list.cp_name FROM vb_books,cp_data_list WHERE categories ${c} AND name LIKE '%${s}%' AND vb_books.publishing = cp_data_list.sid ORDER BY ${a} DESC LIMIT ${(page -
           1) *
           perPage},${perPage}`
       );
@@ -73,6 +73,20 @@ router.get("/search_book/?", (req, res) => {
   const urlpart = url.parse(req.url, true);
   search = decodeURI(urlpart.search.replace("?", ""));
   const sql = `SELECT sid,name,author FROM vb_books WHERE name LIKE '%${search}%' OR author LIKE '%${search}%'`;
+  db.query(sql, (error, results) => {
+    if (error) {
+      return res.send(error);
+    } else {
+      return res.json({
+        data: results
+      });
+    }
+  });
+});
+
+// Nav
+router.get("/nav", (req, res) => {
+  const sql = `SELECT vb_books.sid,vb_books.name,vb_books.categories,vb_categories.categoriesName FROM vb_books LEFT JOIN vb_categories ON vb_categories.sid = vb_books.categories `;
   db.query(sql, (error, results) => {
     if (error) {
       return res.send(error);

@@ -4,6 +4,27 @@ import flatCache from 'flat-cache';
 import getRecommenderBooks from './recommendBook'
 const router = express.Router()
 const cache = flatCache.load('cacheId');
+import nodemailer from 'nodemailer';
+import { mailAcSignOK, mailAcSignNotice } from './acMail';
+import schedule from 'node-schedule';
+import moment from 'moment';
+import getAllDiscountAmount from './getAllDiscountAmount'
+
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'pbookMfee04@gmail.com',
+        pass: 'mfee04pbook'
+    }
+});
+
+var mailOptions = {
+    from: 'pbookMfee04@gmail.com',
+    to: 'abc1230429@gmail.com',
+    subject: '',
+    text: ''
+};
+
 
 // 更新資料表亂數
 // UPDATE `pm_general_discounts` SET `discounts`=ROUND(RAND()*30,0) WHERE `type`=6
@@ -63,14 +84,16 @@ router.post('/books-discount/:memberLevel?', async (req, res, next) => {
     let memberLevel = req.params.memberLevel || 1
     let key = "__express__/activities/book-discount-for-member-level/" + memberLevel
     let cacheContent = cache.getKey(key)
-    if (!cacheContent) {
+    let currentDate = (new Date()).toLocaleDateString()
+    if (!cacheContent || cacheContent.saveDate !== currentDate) {
         var body = await AC.getBooksDiscountForMemberLevel(memberLevel)
-        let currentDate = (new Date()).toLocaleDateString()
-        cache.setKey(key, { body, saveDate: currentDate })
-        cache.save(true /* noPrune */)
+        await cache.setKey(key, { body, saveDate: currentDate })
+        await cache.save(true /* noPrune */)
+        console.log('save cache')
     } else {
+        console.log('cache save date: ', cacheContent.saveDate)
         var body = cacheContent.body
-    
+        if (typeof (body) === 'string') body = JSON.parse(body)
     }
     let discountArray = []
     for (let i = 0; i < bookArray.length; i++) {
@@ -82,6 +105,10 @@ router.post('/books-discount/:memberLevel?', async (req, res, next) => {
 // 對某階級的會員，取得所有書籍折價資訊
 router.get('/book-discount-for-member-level/:memberLevel', flatCacheMiddleware, async (req, res, next) => {
     res.json(await AC.getBooksDiscountForMemberLevel(req.params.memberLevel))
+})
+
+router.get('/getAllDiscountAmount', async (req, res, next) => {
+    res.json(await getAllDiscountAmount())
 })
 
 // 對特定會員，獲得協同過濾推薦書籍
@@ -98,7 +125,22 @@ router.get('/ac-sign/:memberNum', async (req, res, next) => {
     res.json(await AC.getSignedActivities(req))
 })
 router.post('/ac-sign', async (req, res, next) => {
-    res.json(await AC.signUpActivity(req))
+    let result = await AC.signUpActivity(req);
+    if (+result.type) {
+        mailAcSignOK(result)
+        let acNoticeDate = moment(result.date, 'YYYY-MM-DD').subtract(12, 'h')
+        if (acNoticeDate.fromNow().split(' ').splice(-1)[0] === 'ago') {
+            mailAcSignNotice(result)
+        }
+        else {
+            var j = schedule.scheduleJob(acNoticeDate.format(), function (result) {
+                mailAcSignNotice(result)
+            }.bind(null, result));
+            console.log(j.nextInvocation())
+        }
+    }
+
+    res.json(result)
 })
 router.put('/ac-sign', async (req, res, next) => {
     res.json(await AC.updateSignedActivities(req.body))
@@ -107,55 +149,12 @@ router.delete('/ac-sign', async (req, res, next) => {
     res.json(await AC.deleteSignedActivities(req.body))
 })
 
-
-// router.post('/add', (req, res, next) => {
-//   //read product information from request
-//   let product = new Product(req.body.prd_name, req.body.prd_price)
-
-//   db.query(product.getAddProductSQL(), (err, data) => {
-//     res.status(200).json({
-//       message: 'Product added.',
-//       productId: data.insertId,
-//     })
-//   })
-// })
-
-// router.get('/:productId', (req, res, next) => {
-//   let pid = req.params.productId
-
-//   db.query(Product.getProductByIdSQL(pid), (err, data) => {
-//     if (!err) {
-//       if (data && data.length > 0) {
-//         res.status(200).json({
-//           message: 'Product found.',
-//           product: data,
-//         })
-//       } else {
-//         res.status(200).json({
-//           message: 'Product Not found.',
-//         })
-//       }
-//     }
-//   })
-// })
-
-// router.post('/delete', (req, res, next) => {
-//   var pid = req.body.productId
-
-//   db.query(Product.deleteProductByIdSQL(pid), (err, data) => {
-//     if (!err) {
-//       if (data && data.affectedRows > 0) {
-//         res.status(200).json({
-//           message: `Product deleted with id = ${pid}.`,
-//           affectedRows: data.affectedRows,
-//         })
-//       } else {
-//         res.status(200).json({
-//           message: 'Product Not found.',
-//         })
-//       }
-//     }
-//   })
-// })
+router.get('/ac-like/:memberNum/:acType/:acId/:toggle?', async (req, res, next) => {
+    const { memberNum, acType, acId, toggle } = req.params
+    res.json(await AC.acLike(memberNum, acType, acId, toggle))
+})
+router.get('/ac-like/:memberNum', async (req, res, next) => {
+    res.json(await AC.getAcLike(req.params.memberNum))
+})
 
 module.exports = router

@@ -5,9 +5,12 @@
   flex: 1 1 600px;
   a {
     color: $black-tea;
+   
     &:hover {
       // font-size: 1.6rem;
-      color: $Darjeeling;
+      color: $grass-yellow;
+      font-weight: bold;
+      // text-shadow: 2px 0 1px $black-tea;
     }
   }
   th {
@@ -28,14 +31,14 @@
       &::before {
         content: '';
         margin-right: 8px;
-        border: 3px solid $Darjeeling;
+        border: 3px solid $grass-yellow;
       }
     }
   }
 
   .list-title {
     max-height: 70px;
-    max-width: 700px;
+    max-width: 650px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -49,6 +52,6 @@
     color: $grass-yellow;
   }
   .trachCanIcon {
-    color: $deepsea;
+    color: $Darjeeling
   }
 }

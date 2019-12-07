@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import { lighten, makeStyles, withStyles } from '@material-ui/core/styles'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import Rating from '@material-ui/lab/Rating'
@@ -37,21 +36,13 @@ const StyledRating = withStyles({
   },
 })(Rating)
 
-const BookScore = ({ callback ,callback2}) => {
+const BookScore = ({ callback, callback2 }) => {
   const [bs, setBs] = useState(() => callback2())
   const [bookinfo, setBookinfo] = useState(() => callback())
-  // const { callback } = props
   useEffect(() => {
-    setBs(callback2())
     setBookinfo(callback())
+    setBs(callback2())
   }, [callback, callback2])
-
-  //資料ajax
-  // const star = () => {
-  //   axios.get('http://localhost:5555/reviews/book_ratings').then(res => {
-  //     setBs(res.data.data)
-  //   }, [])
-  // }
 
   let fiveStars = [],
     fourStars = [],
@@ -64,7 +55,7 @@ const BookScore = ({ callback ,callback2}) => {
 
   const classes = useStyles()
   function countRate(bs) {
-    for (let j = 1; j <= 124; j++) {
+    for (let j = 1; j <= 1002; j++) {
       fiveStars[j] = 0
       fourStars[j] = 0
       threeStars[j] = 0
@@ -94,7 +85,7 @@ const BookScore = ({ callback ,callback2}) => {
         }
       }
     }
-    for (let j = 1; j <= 124; j++) {
+    for (let j = 1; j <= 1002; j++) {
       avg[j] = (
         (fiveStars[j] * 5 +
           fourStars[j] * 4 +

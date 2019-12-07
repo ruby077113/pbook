@@ -1,4 +1,5 @@
 import { db, sqlQuery } from './connectDB'
+import moment from 'moment'
 
 class AC {
 
@@ -75,9 +76,8 @@ class AC {
         }
         cp_sql_string += " 0 )"
         // -------
-        sql += cate_condition.length === 0 ? '' : 'AND ' + cate_sql_string
-        sql += cpId.length.length === 0 ? '' : 'AND ' + cp_sql_string
-        console.log(sql)
+        sql += cate_condition.length === 0 ? '' : ' AND ' + cate_sql_string
+        sql += cpId.length === 0 ? '' : ' AND ' + cp_sql_string
         let books = await sqlQuery(sql)
         return books
     }
@@ -115,7 +115,6 @@ class AC {
         }
         // 取得折價金額
         discount.amount = await AC.getDiscountAmount(acId)
-        console.log(123, acId, discount.amount)
         discount.info = `member: 適用會員。\nbooks: 適用書籍。\namount: 折價 O %。\nmember與books若為空陣列代表全部適用 `
         return discount
     }
@@ -163,7 +162,11 @@ class AC {
         let sql = ''
         let result = {
             type: 1,
-            description: '報名成功'
+            description: '報名成功',
+            inputData,
+            title: '',
+            intro: '',
+            date: '',
         }
         inputData.memberId = (await AC.memberSidMapArray())[inputData.memberNum] || req.sessionID
 
@@ -179,8 +182,8 @@ class AC {
         }
 
         // 檢查名額
-        sql = 'SELECT `quota`, `registered` FROM `ac_pbook2` WHERE `sid`=' + inputData.acId
-        let { quota, registered } = (await sqlQuery(sql))[0]
+        sql = 'SELECT `quota`, `registered`, `title`, `intro`, `date` FROM `ac_pbook2` WHERE `sid`=' + inputData.acId
+        let { quota, registered, title, intro, date } = (await sqlQuery(sql))[0]
         if ((quota - registered) <= 0) {
             result.type = 0
             result.description = '名額已滿'
@@ -197,6 +200,9 @@ class AC {
         // 名額減一
         sql = 'UPDATE `ac_pbook2` SET `registered`=' + (registered + 1) + ' WHERE `sid`=' + inputData.acId
         await sqlQuery(sql)
+        result.title = title
+        result.intro = intro
+        result.date = date
 
         return result
     }
@@ -272,6 +278,48 @@ class AC {
             }
         }
         return result
+    }
+
+    static async acLike(memberNum, acType, acId, toggle) {
+        let sqlWhere = 'WHERE `memberNum`="' + memberNum + '" AND `type`=' + acType + ' AND `acId`=' + acId
+        let sql = 'SELECT COUNT(1) FROM `ac_like` ' + sqlWhere
+        let currentTime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
+        let isLike = (await sqlQuery(sql))[0]['COUNT(1)']
+        if (toggle && isLike) {
+            sql = 'DELETE FROM `ac_like` ' + sqlWhere
+        } else if (toggle && !isLike) {
+            sql = 'INSERT INTO `ac_like`(`memberNum`, `type`, `acId`, `time`)'
+            sql += `VALUES ("${memberNum}",${acType},${acId},"${currentTime}")`
+        } else {
+            return isLike;
+        }
+        return await sqlQuery(sql)
+    }
+
+    static async getAcLike(memberNum) {
+        let sql = 'SELECT * FROM `ac_like` WHERE `memberNum`="' + memberNum + '"'
+        let likeArray = await sqlQuery(sql)
+        let offlineLikes = likeArray.filter(v => +v.type === 1)
+        let discountLikes = likeArray.filter(v => +v.type === 2)
+        sql = 'SELECT `sid`,`title`,`date` FROM `ac_pbook2` WHERE 0'
+        offlineLikes.forEach(v => {
+            sql += ' OR `sid`=' + v.acId
+        })
+        let offlineLikesInfo = await sqlQuery(sql)
+        offlineLikes.forEach(v => {
+            v.info = offlineLikesInfo.filter(w => w.sid === v.acId)[0]
+        })
+
+        sql = 'SELECT `sid`,`title`,`start_time`, `end_time` FROM `pm_event2` WHERE 0'
+        discountLikes.forEach(v => {
+            sql += ' OR `sid`=' + v.acId
+        })
+        let discountLikesInfo = await sqlQuery(sql)
+        discountLikes.forEach(v => {
+            v.info = discountLikesInfo.filter(w => w.sid === v.acId)[0]
+        })
+        return { offlineLikes, discountLikes }
+
     }
 
 }

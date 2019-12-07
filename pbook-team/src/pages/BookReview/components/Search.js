@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export function Search(props) {
   const [s_result, outputResult] = useState([])
@@ -24,8 +22,8 @@ export function Search(props) {
         .get(`http://localhost:5555/reviews/search_book/?${search}`)
         .then(res => {
           outputResult(res.data.data)
+          console.log(res.data.data)
           setSearch({ getData: true })
-          console.log(res.data.data.length)
         })
     } else {
       setSearch({ getData: false })
@@ -43,12 +41,6 @@ export function Search(props) {
     }
   }
 
-  // const keypress = e => {
-  //   if (e.which === 13) {
-  //     search_result(e.target.value)
-  //   }
-  // }
-
   return (
     <div>
       <input
@@ -57,20 +49,16 @@ export function Search(props) {
         onChange={changeHandler}
         className="reviews_search"
         type="search"
-        placeholder="搜尋書名或作者"
+        placeholder="搜尋書名"
       />
-      {/* <FontAwesomeIcon
-        onClick={() => {
-          search_result(searchText.text)
-        }}
-        icon={faSearch}
-      /> */}
       {searchText.getData ? (
         <ul className="reviews_search_result">
           {s_result.map((res, index) => (
-            <li key={index} value={res.sid} onClick={setName}>
-              {res.name}
-            </li>
+            <>
+              <li key={index} value={res.sid} onClick={setName}>
+                {res.name}
+              </li>
+            </>
           ))}
         </ul>
       ) : (

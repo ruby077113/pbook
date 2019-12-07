@@ -7,6 +7,8 @@ import {
   BOOKINFO_REQUEST,
   ADD_TO_FAV_RECEIVE,
   ADD_TO_FAV_REQUEST,
+  DEL_FAV_RECEIVE,
+  DEL_FAV_REQUEST,
   ADD_TO_CART_RECEIVE,
   ADD_TO_CART_REQUEST,
   CART_RECEIVE,
@@ -21,6 +23,10 @@ import {
   ADD_ORDER_REQUEST,
   REVIEWS_RECEIVE,
   REVIEWS_REQUEST,
+  FAVORITE_RECEIVE,
+  FAVORITE_REQUEST,
+  FAVORITENUM_RECEIVE,
+  FAVORITENUM_REQUEST,
   ADD_CART_TO_ORDER,
 } from './ShopActions'
 
@@ -185,6 +191,47 @@ function addToFav(state = [], action) {
       return {
         ...state,
         ...af(state[action], action),
+      }
+    default:
+      return state
+  }
+}
+//---------------------
+//------delFav-------
+function df(
+  state = {
+    isFetching: false,
+    didInvalidate: false,
+  },
+  action
+) {
+  switch (action.type) {
+    case DEL_FAV_RECEIVE:
+      return {
+        ...state,
+        isFetching: false,
+        didInvalidate: false,
+        payload: action.payload,
+        lastUpdated: action.receivedAt,
+      }
+    case DEL_FAV_REQUEST:
+      return {
+        ...state,
+        isFetching: true,
+        didInvalidate: false,
+      }
+    default:
+      return state
+  }
+}
+
+function delFav(state = [], action) {
+  switch (action.type) {
+    case DEL_FAV_RECEIVE:
+    case DEL_FAV_REQUEST:
+      return {
+        ...state,
+        ...df(state[action], action),
       }
     default:
       return state
@@ -477,6 +524,86 @@ function reviews(state = [], action) {
   }
 }
 //----------------------
+//-----FAVORITE---------
+function fv(
+  state = {
+    isFetching: false,
+    didInvalidate: false,
+  },
+  action
+) {
+  switch (action.type) {
+    case FAVORITE_RECEIVE:
+      return {
+        ...state,
+        isFetching: false,
+        didInvalidate: false,
+        payload: action.payload,
+        lastUpdated: action.receivedAt,
+      }
+    case FAVORITE_REQUEST:
+      return {
+        ...state,
+        isFetching: true,
+        didInvalidate: false,
+      }
+    default:
+      return state
+  }
+}
+function favorite(state = [], action) {
+  switch (action.type) {
+    case FAVORITE_RECEIVE:
+    case FAVORITE_REQUEST:
+      return {
+        ...state,
+        ...fv(state[action], action),
+      }
+    default:
+      return state
+  }
+}
+//----------------------
+//-----FAVORITENUM---------
+function fvn(
+  state = {
+    isFetching: false,
+    didInvalidate: false,
+  },
+  action
+) {
+  switch (action.type) {
+    case FAVORITENUM_RECEIVE:
+      return {
+        ...state,
+        isFetching: false,
+        didInvalidate: false,
+        payload: action.payload,
+        lastUpdated: action.receivedAt,
+      }
+    case FAVORITENUM_REQUEST:
+      return {
+        ...state,
+        isFetching: true,
+        didInvalidate: false,
+      }
+    default:
+      return state
+  }
+}
+function favoriteNum(state = [], action) {
+  switch (action.type) {
+    case FAVORITENUM_RECEIVE:
+    case FAVORITENUM_REQUEST:
+      return {
+        ...state,
+        ...fvn(state[action], action),
+      }
+    default:
+      return state
+  }
+}
+//----------------------
 const ap = {
   totalAmount: 0,
   totalPrice: 0,
@@ -498,6 +625,7 @@ function cartToOrder(state = ap, action) {
 
 const ShopReducers = {
   addToFav,
+  delFav,
   addToCart,
   Cart,
   delCart,
@@ -508,6 +636,8 @@ const ShopReducers = {
   order,
   addOrder,
   reviews,
+  favorite,
+  favoriteNum,
   cartToOrder,
 }
 

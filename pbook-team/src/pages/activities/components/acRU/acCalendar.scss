@@ -1,5 +1,13 @@
 @import '../../color.scss';
 .acCalendarContainer {
+  .popover {
+    color: $color-black;
+    border: 1px solid darken($color-green, 5%);
+    max-width: 480px;
+    .popover-header {
+      background: $color-green;
+    }
+  }
   .fc-header-toolbar {
     h2 {
       overflow: hidden;
@@ -25,6 +33,9 @@
     }
   }
   .fc-event {
+    .fc-time {
+      display: none;
+    }
     background-color: darken($color-green, 30%);
     &:hover {
       background-color: darken($color-green, 15%);

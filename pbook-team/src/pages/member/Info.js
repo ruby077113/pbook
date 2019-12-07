@@ -104,14 +104,6 @@ class Info extends React.Component {
                               </div>
                           </div>
                           <div className="list-r">
-                                  <div className="item">
-                                          <h3>會員編號 :</h3>
-                                          <h3>{member.MR_number}</h3>
-                                  </div>
-                                  <div className="item">
-                                          <h3>會員等級 :</h3>
-                                          <h3>{level[member.MR_personLevel]}</h3>
-                                  </div>
                                       <div className="item col">
                                           <figure 
                                           style={{
@@ -119,6 +111,15 @@ class Info extends React.Component {
                                             }}>
                                           </figure>
                                       </div>
+                                  <div className="item">
+                                          <h3>會員編號 :</h3>
+                                          <h3>{member.MR_number}</h3>
+                                  </div>
+                                  <div className="item">
+                                          <h3>會員等級 :</h3>
+                                          <h3>{level[member.MR_personLevel]}</h3>
+                                          <img src={require('../login/品書印章.png')} />
+                                  </div>
                           </div>
                       </div>            
                         </div>

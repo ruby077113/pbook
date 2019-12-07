@@ -12,7 +12,6 @@ import {
   AppendVedio,
 } from './fmAction'
 //UI componet
-import CustomizedDialogs from '../../components/Material-UI/Dialog'
 import { makeStyles } from '@material-ui/core/styles'
 import InputLabel from '@material-ui/core/InputLabel'
 import Input from '@material-ui/core/Input'
@@ -33,16 +32,13 @@ import CancelIcon from '@material-ui/icons/Cancel'
 import CloseIcon from '@material-ui/icons/Close'
 import Fab from '@material-ui/core/Fab'
 // ResponsiveDialog
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import ResponsiveDialog from '../../components/Material-UI/ResponsiveDialog'
-import { useTheme } from '@material-ui/core/styles';
-
+import { useTheme } from '@material-ui/core/styles'
 
 //textarea
 import TextareaAutosize from 'react-textarea-autosize'
 import Swal from 'sweetalert2'
-
-
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -55,7 +51,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
   },
 }))
-
 
 const vb_categories = {
   1: '文學小說',
@@ -92,12 +87,13 @@ const PostAritcle = props => {
   const [subcate, setSubcate] = useState([1, 2])
   const [mainImg, setMainImg] = useState(0)
   const [openUnsplash, setOpenUnsplash] = useState(false)
+  const [isMainUpload, setIsMainUpload] = useState(false)
 
   let { category, MR_number } = useParams()
 
   const Swal = require('sweetalert2')
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const theme = useTheme()
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
   useEffect(() => {
     handelAsideFixed()
@@ -130,7 +126,6 @@ const PostAritcle = props => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canIPost])
 
-
   //fetch子分類名稱
   const handleSubCate = () => {
     fetch(`http://localhost:5555/forum/cate/${category}`)
@@ -142,7 +137,6 @@ const PostAritcle = props => {
         setSubcate(result.subcategory)
       })
   }
-
 
   //插入圖片 STEP1:插入隱藏input
   const handleInsertImg = e => {
@@ -165,7 +159,7 @@ const PostAritcle = props => {
     let file = document.querySelector(inputId).files[0]
     let reader = new FileReader()
     reader.readAsDataURL(file)
-    reader.addEventListener('load', function (event) {
+    reader.addEventListener('load', function(event) {
       let element = (
         <div
           className="insertImg "
@@ -248,7 +242,7 @@ const PostAritcle = props => {
       if (select.value === '') {
         document.querySelector('.selectControl').classList.add('show')
         document.querySelector('#subcate-help').classList.add('show')
-        document.documentElement.scrollTop = 0
+        goToTop()
       }
       if (title.value === '') {
         document.querySelector('#title').classList.add('show')
@@ -256,9 +250,20 @@ const PostAritcle = props => {
       }
     }
   }
+  const goToTop = (event, destination = 0, duration = 300) => {
+    const scrollStep = -window.scrollY / (duration / 15)
+    const scrollInterval = setInterval(function() {
+      if (window.scrollY !== 0 && window.scrollY > destination) {
+        window.scrollBy(200, scrollStep)
+      } else {
+        clearInterval(scrollInterval)
+      }
+    }, 15)
+  }
 
   //step3 : 處理文章內容 section
   const handleSection = () => {
+    let mainImgIndex = false
     let content = document.querySelector('#ddd')
     let arr = [...content.childNodes]
     let textContent = arr
@@ -276,8 +281,8 @@ const PostAritcle = props => {
       return item.nodeName !== 'INPUT'
     })
     //選擇section內node 挑出textarea 和 上傳圖片 和unsplash圖片 回傳為arr分別處理
-    let arrOfUnsplash=[]
-    let nodeNameSelect = arr1.map(item => {
+    let arrOfUnsplash = []
+    let nodeNameSelect = arr1.map((item, index) => {
       if (item.nodeName == 'DIV') {
         if (item.className === 'video-frame') return 'div'
         if (item.firstChild.nodeName === 'DIV') {
@@ -285,8 +290,14 @@ const PostAritcle = props => {
           //如果img 的src開頭為data表示為上傳圖片 => img-upload 開頭為http為unsplash圖片=>img-unsplash
           if (node.nodeName === 'IMG') {
             if (node.src.slice(0, 4) === 'data') {
+              if (!mainImgIndex) {
+                mainImgIndex = 1
+              }
               return 'img-upload'
             } else {
+              if (!mainImgIndex) {
+                mainImgIndex = 2
+              }
               arrOfUnsplash.push(node.src)
               return 'img-unsplash'
             }
@@ -301,7 +312,8 @@ const PostAritcle = props => {
       }
     })
     let result = nodeNameSelect.filter(item => item !== '')
-    // console.log(nodeNameSelect)    
+    // console.log(nodeNameSelect)
+    setIsMainUpload(mainImgIndex)
     setImgFromUnsplash(arrOfUnsplash)
     setSectionElement(result)
     setCanIPost(canIPost + 1)
@@ -327,10 +339,11 @@ const PostAritcle = props => {
     textareaValue.forEach(v => {
       formData.append('textareaValue[]', v)
     })
-    console.log('v', imgFromUnsplash)
+
     imgFromUnsplash.forEach(v => {
       formData.append('imgFromUnsplash[]', v)
     })
+    formData.append('isMainUpload', isMainUpload)
     formData.append('title', title)
     formData.append('cate', category)
     formData.append('subcate', subcate1)
@@ -358,7 +371,7 @@ const PostAritcle = props => {
         props.dispatch(clearPostAritcleState())
         props.history.push('/forum')
       })
-      .catch(function (error) {
+      .catch(function(error) {
         console.log(
           'There has been a problem with your fetch operation: ',
           error.message
@@ -373,7 +386,7 @@ const PostAritcle = props => {
   const handleUnsplashClose = () => {
     setOpenUnsplash(false)
   }
-  const handleUnsplashPick = (url) => {
+  const handleUnsplashPick = url => {
     let element = (
       <div
         className="insertImg "
@@ -410,7 +423,6 @@ const PostAritcle = props => {
       }
     })
   }
-
 
   //插入影片
   const InsertVedio = () => {
@@ -554,15 +566,15 @@ const PostAritcle = props => {
               </h2>
             </div>
           </div>
-          <button onClick={handleSection}>handleSection</button>
           <section id="inputTextToSave" id="ddd">
             {props.addElement}
           </section>
-          <ResponsiveDialog fullScreen={fullScreen} openUnsplash={openUnsplash}
+          <ResponsiveDialog
+            fullScreen={fullScreen}
+            openUnsplash={openUnsplash}
             closeUnsplash={handleUnsplashClose}
             pickUnsplash={handleUnsplashPick}
           ></ResponsiveDialog>
-
         </div>
       </div>
     </div>

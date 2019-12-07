@@ -1,16 +1,21 @@
 @import './systemcolor';
 
 .post-article {
+  font-family: 'Microsoft JhengHei', 'Noto Sans TC', sans-serif !important;
   input {
     border: none;
   }
   textarea {
+    font-size: 1rem;
     padding: 8px 24px;
     border: none;
     width: 100%;
     overflow: auto;
     height: 120px;
     resize: none;
+    &:focus {
+      outline: none;
+    }
   }
   img {
     padding: 0 16px;
@@ -57,9 +62,13 @@
     .aside {
       @extend %card-module;
       min-width: 200px;
-      right: 0;
+      right: 20px;
       top: 0;
       position: absolute;
+      .MuiTypography-body1{
+        font-size: 1.2rem !important;
+        font-weight:600;
+      }
     }
     .container-m {
       max-width: 900px;
@@ -116,6 +125,9 @@
     flex-grow: 1;
     align-items: center;
     margin-bottom: -4px;
+    &:focus {
+      outline: none;
+    }
   }
   .select {
     flex-grow: 0;
@@ -124,6 +136,9 @@
     max-width: 700px;
     width: 100%;
     color: $grey-grey;
+    &:focus {
+      outline: none;
+    }
     &.show {
       border: 2px solid $Darjeeling;
       border-radius: 5px;

@@ -119,8 +119,8 @@ router.post("/bookcase", (req, res) => {
   };
   //INSERT INTO br_bookcase(number, isbn, bookName,blog,created_time)VALUES('MR00166', '9789864777112','','', now())
   data.push(bookcase);
-  const sql = `INSERT INTO br_bookcase(number,isbn,title,bookName,blog,created_time) 
-            VALUES('${data[0].number}','${data[0].isbn}','', '', '', now()) `;
+  const sql = `INSERT INTO br_bookcase(number,isbn,title,bookSid,bookName,blog,created_time) 
+            VALUES('${data[0].number}','${data[0].isbn}','','1', '', '', now()) `;
   db.query(sql, (error, results) => {
     if (error) {
       return res.send(error);

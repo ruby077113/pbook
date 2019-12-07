@@ -39,13 +39,15 @@ router.get("/book_data/:page?/:categories?/:keyword?", (req, res) => {
   let where = " WHERE 1 ";
   if (keyword) {
     keyword = keyword.split("'").join("\\'"); // 避免 SQL injection
-    where += " AND `vb_books`.`name` LIKE '%" + keyword + "%' ";
+    where += " AND (`vb_books`.`name` LIKE '%" + keyword + "%' OR `vb_books`.`author` LIKE '%" + keyword + "%') ";
     output.keyword = keyword; //可以在網址看keyword用
   }
   if (categories && categories !== "search") {
     where += " AND `vb_books`.`categories`" + " = " + categories;
     output.categories = categories;
   }
+  console.log(where)
+  
   let sql =
     "SELECT COUNT(1) `total` FROM `vb_books` LEFT JOIN `cp_data_list` ON `vb_books`.`publishing` = `cp_data_list`.`sid` LEFT JOIN `vb_ratings` ON `vb_books`.`sid`=`vb_ratings`.`book`" +
     where;
@@ -544,4 +546,34 @@ router.get("/reviews/:book", (req, res) => {
     });
 });
 
+router.get("/favorite/:member", (req, res) => {
+  let member = req.params.member; //search用
+  let where = " WHERE 1 ";
+  member = member.split("'").join("\\'"); // 避免 SQL injection
+  where += " AND `number` = '" + member + "'";
+  let sql = "SELECT `br_bookcase`.`isbn` FROM `br_bookcase`" + where;
+  // console.log(sql);
+  db.queryAsync(sql)
+    .then(results => {
+      res.json(results);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+});
+
+router.get("/favoriteNum/:sid", (req, res) => {
+  let sid = req.params.sid; //search用
+  let where = " WHERE 1 ";
+  sid = sid.split("'").join("\\'"); // 避免 SQL injection
+  where += " AND `bookSid` = '" + sid + "'";
+  let sql = "SELECT COUNT(1) `total` FROM `br_bookcase`" + where;
+  db.queryAsync(sql)
+    .then(results => {
+      res.json(results[0]["total"]);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+});
 module.exports = router;

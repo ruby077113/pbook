@@ -26,13 +26,11 @@ import {
   faUndoAlt,
   faPenNib,
   faPlusCircle,
+  faDownload,
 } from '@fortawesome/free-solid-svg-icons'
 
 var socket
-var items = [
-  '<img class="stickerImg" src="http://localhost:5555/images/chatSticker/sticker(0).png" alt="Avatar"/>',
-  '<img class="stickerImg" src="http://localhost:5555/images/chatSticker/sticker(1).png" alt="Avatar"/>',
-]
+
 class Chat extends React.Component {
   constructor(props) {
     super(props)
@@ -71,6 +69,7 @@ class Chat extends React.Component {
         sid: '',
       },
       memoValue: '',
+      oldDataAlbum: [],
     }
     if (localStorage.getItem('user') !== null) {
       if (this.props.location.pathname === '/chat') {
@@ -86,6 +85,7 @@ class Chat extends React.Component {
     socket.on('SeverToClientMsg', this.onMsg)
     socket.on('SeverToClientDelete', this.onMsgDelete)
     socket.on('SeverToClientInsertMemo', this.onInsertMemo)
+    socket.on('SeverToClientInsertAlbum', this.onInsertAlbum)
   }
 
   // 控制左邊的搜尋欄位
@@ -97,7 +97,7 @@ class Chat extends React.Component {
 
   // 點擊左邊的私聊列表
   handleMessage = async () => {
-    var firstOldDataMessage
+    var firstOldDataMessage, firstOldDataMemo
     this.myDiv.classList.add('hide')
     console.log('點擊左邊那欄第一次拿chatMessage')
     await axios
@@ -111,9 +111,16 @@ class Chat extends React.Component {
         })
       })
       .then(res => {
+        firstOldDataMemo = res.data
+        return axios.post(`http://localhost:5555/nana_use/chatAlbum`, {
+          memberId: JSON.parse(localStorage.getItem('user')).MR_number,
+        })
+      })
+      .then(res => {
         this.setState({
           oldDataMessage: firstOldDataMessage,
-          oldDataMemo: res.data,
+          oldDataMemo: firstOldDataMemo,
+          oldDataAlbum: res.data,
         })
       })
       .catch(error => {
@@ -200,6 +207,10 @@ class Chat extends React.Component {
 
   onInsertMemo = data => {
     this.setState({ oldDataMemo: data })
+  }
+
+  onInsertAlbum = data => {
+    this.setState({ oldDataAlbum: data })
   }
 
   // 下方的聊天input(滑鼠點擊)
@@ -639,6 +650,72 @@ class Chat extends React.Component {
     memoSidSpan.classList.toggle('hide')
   }
 
+  //私聊將訊息內的照片添加至相簿
+  handleAddToAlbum = picName => {
+    console.log(picName)
+
+    // 利用網址列取得chat_id
+    var chat_id_index = window.location.href.indexOf('#') // console.log(chat_id_index,"26")
+    var chat_id = window.location.href.slice(chat_id_index + 1)
+    // 利用localStorage取得發文者(myFrom)
+    var myFrom = JSON.parse(localStorage.getItem('user')).MR_number
+    // 利用網址取得myTo
+    var chat_id_array = chat_id.split('MR')
+    var myFrom_array = myFrom.split('MR')
+
+    var myTo = []
+    for (var i = 1; i < chat_id_array.length; i++) {
+      for (var k = 1; k < myFrom_array.length; k++) {
+        if (chat_id_array[i] !== myFrom_array[k]) {
+          myTo.push(chat_id_array[i])
+        }
+      }
+    }
+    console.log(myTo[0])
+
+    swal({
+      title: '照片新增成功!',
+      text: '去相簿看看吧~',
+      icon: 'success',
+      buttons: true,
+      buttons: 'OK',
+    }).then(() => {
+      socket.emit(`clientToSeverInsertAlbum`, {
+        chat_id: chat_id,
+        myFrom: myFrom,
+        myTo: 'MR' + myTo[0],
+        content: picName,
+        myDelete: 0,
+      })
+      this.setState({ key: 'album' })
+    })
+  }
+
+  //私聊下載照片
+  handleDownloadImg = picName => {
+    var url = 'http://localhost:5555/images/chatFile/' + picName
+    axios
+      .get(url, {
+        responseType: 'blob', //返回数据的格式指定为blob
+      })
+      .then(response => {
+        console.log(response)
+        let url = window.URL.createObjectURL(response.data) //创建一个新的 URL 对象
+        console.log(url)
+        //以下代码一句话解释，在页面上生成一个a标签并指定href为上面的url,然后模拟点击，以实现自动下载
+        var a = document.createElement('a')
+        document.body.appendChild(a)
+        a.href = url
+        a.download = picName
+        a.click()
+        window.URL.revokeObjectURL(url)
+      })
+      .catch(err => {
+        console.log(`接口调用失败`)
+        console.log(err)
+      })
+  }
+
   componentDidMount() {
     axios
       .post(`http://localhost:5555/nana_use/chatList2`, {
@@ -674,6 +751,7 @@ class Chat extends React.Component {
     console.log('render oldDataMemo', this.state.oldDataMemo)
     console.log('render modalData', this.state.modalData)
     console.log('render memoValue', this.state.memoValue)
+    console.log('render oldDataAlbum', this.state.oldDataAlbum)
 
     let myId = JSON.parse(localStorage.getItem('user')).MR_number
     let myPic = JSON.parse(localStorage.getItem('user')).MR_pic
@@ -1087,9 +1165,29 @@ class Chat extends React.Component {
                                                           }
                                                           alt="Avatar"
                                                         />
-                                                        <div className="addToAlbum">
+                                                        <div
+                                                          className="addToAlbum"
+                                                          onClick={() =>
+                                                            this.handleAddToAlbum(
+                                                              value
+                                                            )
+                                                          }
+                                                        >
                                                           <FontAwesomeIcon
                                                             icon={faPlusCircle}
+                                                            className="pointer"
+                                                          />
+                                                        </div>
+                                                        <div
+                                                          className="downloadImg"
+                                                          onClick={() =>
+                                                            this.handleDownloadImg(
+                                                              value
+                                                            )
+                                                          }
+                                                        >
+                                                          <FontAwesomeIcon
+                                                            icon={faDownload}
                                                             className="pointer"
                                                           />
                                                         </div>
@@ -1148,9 +1246,29 @@ class Chat extends React.Component {
                                                           }
                                                           alt="Avatar"
                                                         />
-                                                        <div className="addToAlbum">
+                                                        <div
+                                                          className="addToAlbum"
+                                                          onClick={() =>
+                                                            this.handleAddToAlbum(
+                                                              value
+                                                            )
+                                                          }
+                                                        >
                                                           <FontAwesomeIcon
                                                             icon={faPlusCircle}
+                                                            className="pointer"
+                                                          />
+                                                        </div>
+                                                        <div
+                                                          className="downloadImg"
+                                                          onClick={() =>
+                                                            this.handleDownloadImg(
+                                                              value
+                                                            )
+                                                          }
+                                                        >
+                                                          <FontAwesomeIcon
+                                                            icon={faDownload}
                                                             className="pointer"
                                                           />
                                                         </div>
@@ -1387,48 +1505,20 @@ class Chat extends React.Component {
                           <Tab eventKey="album" title="相簿">
                             <div className="chatMessageScroll">
                               <div className="card-columns">
-                                <div className="card">
-                                  <img
-                                    src="http://localhost:5555/images/member/yoko.jpg"
-                                    className="card-img-top"
-                                    alt="相簿照片"
-                                  />
-                                </div>
-                                <div className="card">
-                                  <img
-                                    src="http://localhost:5555/images/member/yasu.jpg"
-                                    className="card-img-top"
-                                    alt="相簿照片"
-                                  />
-                                </div>
-                                <div className="card">
-                                  <img
-                                    src="http://localhost:5555/images/chatSticker/sticker(2).png"
-                                    className="card-img-top"
-                                    alt="相簿照片"
-                                  />
-                                </div>
-                                <div className="card">
-                                  <img
-                                    src="http://localhost:5555/images/member/yoko.jpg"
-                                    className="card-img-top"
-                                    alt="相簿照片"
-                                  />
-                                </div>
-                                <div className="card">
-                                  <img
-                                    src="http://localhost:5555/images/chatSticker/sticker(7).png"
-                                    className="card-img-top"
-                                    alt="相簿照片"
-                                  />
-                                </div>
-                                <div className="card">
-                                  <img
-                                    src="http://localhost:5555/ac/images/1200x628_20191028180100.png"
-                                    className="card-img-top"
-                                    alt="相簿照片"
-                                  />
-                                </div>
+                                {this.state.oldDataAlbum.map((value, indx) => {
+                                  return (
+                                    <div className="card" key={index}>
+                                      <img
+                                        src={
+                                          'http://localhost:5555/images/chatFile/' +
+                                          value.content
+                                        }
+                                        className="card-img-top"
+                                        alt="相簿照片"
+                                      />
+                                    </div>
+                                  )
+                                })}
                               </div>
                             </div>
                           </Tab>

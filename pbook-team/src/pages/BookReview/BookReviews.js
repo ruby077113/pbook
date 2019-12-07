@@ -12,7 +12,7 @@ import { faTimes, faPen, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import swal from '@sweetalert/with-react'
 import { BrowserRouter as Router, Route, Link, NavLink } from 'react-router-dom'
-import Nav from './components/BR_Navbar'
+import Nav from './components/Navbar'
 
 //---------------------------------------------------------------------------------------------------------
 const All = styled.section`
@@ -21,7 +21,7 @@ const All = styled.section`
 
 //主要內容外框
 const Main = styled.section`
-  margin: 40px auto 0 auto;
+  margin: 40px auto -35px auto;
   width: 1200px;
 `
 
@@ -35,6 +35,11 @@ const Book = styled.div`
 const BookRow = styled.div`
   display: flex;
   flex-direction: row;
+`
+//未登入會員橫排
+const BookRow2 = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
 `
 
 //直排
@@ -406,15 +411,29 @@ const List = () => {
                 <img
                   className="reviews_list_img"
                   key={data.sid}
-                  src={require('./images/' + data.pic)}
+                  src={`http://localhost:5555/images/books/${data.pic}`}
                 />
               </BookColumn>
               <BookColumn>
                 <BookInfo>
                   <h3>{data.name}</h3>
-                  {'作者:'}
-                  {data.author}
-                  <br />
+                  {'作者:'}&nbsp;
+                  <span style={{ opacity: 0.6 }}>{data.author}</span>
+                  &nbsp;&nbsp;&nbsp;
+                  {'出版社:'}&nbsp;
+                  <span style={{ opacity: 0.6 }}>{data.cp_name}</span>
+                  &nbsp;&nbsp;&nbsp;
+                  {'出版日期:'} &nbsp;
+                  <span style={{ opacity: 0.6 }}>
+                    {new Intl.DateTimeFormat('zh-TW', {
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour12: false,
+                    })
+                      .format(new Date(data.publish_date))
+                      .replace(/\//g, '-')}
+                  </span>
                   <br />
                   <br />
                   {'內容簡介:'}
@@ -437,13 +456,14 @@ const List = () => {
           <div className="reviews_recommendBook">
             {recommendBook.map((book, index) => (
               <Link
+                key={index}
                 className="reviews_recommendBook_Link"
                 to={'/book_reviews/' + book.sid}
               >
-                <div key={index}>
+                <div>
                   <img
                     className="reviews_recommendBook_img"
-                    src={require('./images/' + book.pic)}
+                    src={`http://localhost:5555/images/books/${book.pic}`}
                   />
                   <div className="reviews_recommendBookName">{book.name}</div>
                 </div>
@@ -454,7 +474,9 @@ const List = () => {
           {user.isLogin ? (
             <BookColumnScore>
               <Link to={`/books/information/${urlParams}`}>
-                <button className="reviews_BookBuy">立即購買</button>
+                <button style={{ outline: 0 }} className="reviews_BookBuy">
+                  立即購買
+                </button>
               </Link>
               <BookRow>
                 <BookScoreAndLine List={List} />
@@ -468,11 +490,13 @@ const List = () => {
           ) : (
             <BookColumnScore2>
               <Link to={`/books/information/${urlParams}`}>
-                <button className="reviews_BookBuy">立即購買</button>
+                <button style={{ outline: 0 }} className="reviews_BookBuy">
+                  立即購買
+                </button>
               </Link>
-              <BookRow>
+              <BookRow2>
                 <BookScoreAndLine List={List} />
-              </BookRow>
+              </BookRow2>
               <form onSubmit={addCase}>
                 <button type="submit" className="reviews_BookCase">
                   加入書櫃
@@ -505,16 +529,20 @@ const List = () => {
                   onKeyPress={keypress}
                   placeholder="新增評論..."
                 />
-                <BookRow>
+                <div className="reviews_push2">
                   <p style={{ width: '80px' }}>幫書籍評分</p>
                   <BookStar
                     score_star={review.star}
                     setScore_star={changeHandler}
                   />
-                  <button type="submit" className="reviews_submitBtn">
+                  <button
+                    style={{ outline: 0 }}
+                    type="submit"
+                    className="reviews_submitBtn"
+                  >
                     送出評論
                   </button>
-                </BookRow>
+                </div>
               </form>
             ) : (
               <form className="reviews_form">
@@ -567,7 +595,11 @@ const List = () => {
                       onChange={changeHandler}
                       // onKeyPress={keypress}
                     />
-                    <button type="submit" className="reviews_UpdateBtn">
+                    <button
+                      style={{ outline: 0 }}
+                      type="submit"
+                      className="reviews_UpdateBtn"
+                    >
                       修改評論
                     </button>
                   </form>

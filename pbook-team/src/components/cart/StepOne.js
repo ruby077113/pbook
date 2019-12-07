@@ -9,6 +9,7 @@ import {
   delCartFetch,
   addCartToOrder,
   editCartFetch,
+  cartFetch,
 } from '../shop/ShopActions'
 import './Cart.scss'
 
@@ -59,6 +60,7 @@ const StepOne = props => {
     } else if (props.order === 1) {
       props.setOrder(0)
     }
+    props.dispatch(cartFetch())
   }
   function delCart(sid, fixed_price) {
     props.dispatch(delCartFetch(sid))
@@ -72,6 +74,7 @@ const StepOne = props => {
       props.setOrder(0)
     }
     localStorage.removeItem(sid)
+    props.dispatch(cartFetch())
   }
   return (
     <>

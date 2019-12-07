@@ -20,8 +20,8 @@ class QueryOrder extends React.Component {
     let number = JSON.parse(localStorage.getItem('user')).MR_number
 
     axios.get('http://localhost:5555/books/order/' + number).then(results => {
-     console.log(results);
-    if (results.data.rows) {
+      // console.log(results)
+      if (results.data.rows) {
         this.setState({
           orderData: results.data,
         })
@@ -31,6 +31,10 @@ class QueryOrder extends React.Component {
   }
   render() {
     let orderData = this.state.orderData
+    let totalAmount = 0
+    for (let i = 0; i < orderData.totalBooks; i++) {
+      totalAmount += +(orderData.rows && orderData.rows[i].bookAmount)
+    }
     // console.log(orderData)
 
     return (
@@ -72,7 +76,7 @@ class QueryOrder extends React.Component {
                         orderData.rows && orderData.rows[0].created_time
                       ).format('YYYY-MM-DD HH:mm:ss')}
                     </td>
-                    <td>{orderData.totalBooks}</td>
+                    <td>{totalAmount}</td>
                     <td>{orderData.rows && orderData.rows[0].orderPrice}</td>
                   </tr>
                 </tbody>

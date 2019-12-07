@@ -15,7 +15,12 @@ function BookInfo(props) {
         button: 'OK',
       })
     } else if (index === -1) {
-      props.dispatch(addToCartFetch(sid))
+      props.dispatch(
+        addToCartFetch(
+          sid,
+          Math.round((props.fixed_price * (100 - discount)) / 100)
+        )
+      )
       swal({
         text: '加入購物車成功',
         icon: 'success',
@@ -35,7 +40,7 @@ function BookInfo(props) {
     discount = discountInfo ? +discountInfo.discount : 0
   }
   return (
-    <div className="book_box col-md-3 mb-5">
+    <div className="book_box col-md-3 mb-5 wow fadeIn">
       <figure className="mb-1">
         <Link
           to={'/books/information/' + props.sid}

@@ -76,7 +76,6 @@ app.use("/activities", require("./src/activities/acApi"));
 app.use("/reviews", require("./src/book_review/reviews"));
 app.use("/reviews", require("./src/book_review/books"));
 app.use("/reviews", require("./src/book_review/reply"));
-//下面三行有衝突我先註解掉
 
 app.use("/reviewer", require("./src/reviewer/brReviewerList"));
 app.use("/reviewer", require("./src/reviewer/brBookcase"));

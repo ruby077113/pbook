@@ -1,14 +1,20 @@
 /* 編輯內文，表單區域設定 */
 .Blog_textarea{
     color: #2d3a3a;
-    border: 2px solid #2d3a3a;
-    background: #2d3a3a;
+    border: 1px solid #2d3a3a;
+    background-image: url(./images/bg.png);
     padding: 0 100px 50px 100px;
+    background: #eee;
 }
 /* 部落格瀏覽外框 */
 .Blog_Read_Box{
     border: 1px solid #2d3a3a;
-    padding: 100px;
+    padding: 30px 30px 50px 30px;
+    background: rgba(45, 58, 58, 0.1);
+}
+/* 編輯模式，區塊遮罩 */
+.br_CKEditor{
+    overflow: hidden;
 }
 /* 表單送出按鈕，自訂樣式 */
 .Blog_submit{
@@ -18,26 +24,17 @@
     border: 1px solid #ffc408;
     margin: 10px 0 20px 0;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50% , 50%);
     font-weight: bold;
-    color: #ffc408;
+    color: #fff;
     background: #2d3a3a;
     transition: 0.2s;
 }
 .Blog_submit:hover{
     min-width: 146px;
     border: 2px solid #cde2d0;
-    color: #cde2d0;
-    font-size: 1.2em;
-}
-/* CKEditor編輯器控制 */
-.br_CKEditor{
-    min-height: 260px;
-    border-bottom: 5px solid #2d3a3a;
-    overflow: hidden;
-}
-.ck.ck-content table{
-	margin:0 auto;
+    color: #ffc408;
+    font-size: 1.1rem;
 }
 /* 編輯模式，標題文字 */
 .h3_Red{
@@ -138,19 +135,33 @@
 .BlogLineTop {
     border-top:3px solid #ff525b;
 }
+/* 標題，主要文字 */
+.h5_Edit{
+    background: #2d3a3a;
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #979d9d;
+    padding-bottom: 10px;
+}
+/* 標題，主要文字 */
+.h5_br{
+    text-align: center;
+    font-weight: 800;
+    color: #2d3a3a;
+    margin: 10px 0;
+}
 .h3_br{
-    color: #ffffff;
-    padding: 6px;
+    color: #ffc408;
+    padding: 10px 0;
     margin: 0;
     text-align: center;
     background: #2d3a3a;
 }
-.BlogMouse{
-    cursor: pointer;
-}
 /* 書評部落格 (參照背景) */
 .reviewerBlog {
     padding: 30px 200px 50px 200px;
+    border: 1px solid #2d3a3a;
     /* background: #fff; */
     /* background: url(../reviewer_page//images/03_評品書.png) center center; */
     max-width: 1920px;
@@ -178,8 +189,9 @@
 .pbookChick{
     position: absolute;
     width: 42px;
-    right: 0.8rem;
-    bottom: 0.8rem;
+    right: 13.2rem;
+    bottom: 3.8rem;
+    cursor: pointer;
 }
 /* todo.. UX按鈕 */
 @media (max-width: 786px) {
@@ -193,13 +205,24 @@
     }
     /* 關閉文章，RWD (位置調整) */
     .Animate_Close_Box{
-        top: 10px;
+        top: 0px;
     }
     /* 編輯內文，表單區域設定 (RWD編輯區塊調整)*/
     .Blog_textarea{
-    padding: 0 24px 50px 24px;
+        padding: 0 24px 50px 24px;
     }
     .h3_Red{
         font-size: 1.2rem;
+    }
+}
+@media (max-width: 1000px) {
+    /* 品書雞 */
+    .pbookChick{
+        right: 4.5rem;
+        bottom: 3.8rem;
+    }
+    /* 書評部落格 (閱讀性調整) */
+    .reviewerBlog {
+    padding: 30px 60px 50px 60px;
     }
 }

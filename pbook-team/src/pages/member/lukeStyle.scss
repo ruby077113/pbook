@@ -51,6 +51,43 @@ $content: 24px;
   color: #ff525b;
 }
 
+//FBMessage
+.fbMessage{
+    width: 50px;
+    height: 50px;
+    // background: rgb(86, 75, 97);
+
+  .fbicon{
+    font-size: 60px;
+    color: $black ;
+    position: fixed;
+    bottom: 60px;
+    right: 40px;
+    width: 60px;
+    height: 60px;
+    opacity: 0.6;
+    z-index: 10;
+    cursor: pointer;
+    animation: bounce 1s infinite alternate;
+    transform: translateX(-50%, -50%);
+    
+    &:hover{
+      color: $yellow;
+      font-size: 80px;
+    }
+  }
+  @keyframes bounce {
+    0% {
+      transform: translateY(0px);
+      // transform: translateZ(0px);
+    }
+    100% {
+        transform: translateY(-15px);
+        // transform: translateZ(20px);
+    }
+  }
+}
+
 //查看訂單
 .queryOrder {
   @extend .contentWrap;
@@ -150,7 +187,7 @@ $content: 24px;
   position: absolute;
   // background: #f24;
   right: 0;
-  left: 320px;
+  left: 300px;
   height: 100%;
   padding: 31px;
   color: $yellow;
@@ -341,7 +378,7 @@ $content: 24px;
 .booksContent {
   position: absolute;
   right: 0;
-  left: 320px;
+  left: 300px;
   height: 100%;
   padding: 31px;
   color: $yellow;
@@ -609,13 +646,18 @@ $content: 24px;
 .infoWrap {
   @extend .contentWrap;
   // border: 1px solid #000;
+  width: 1100px;
+  margin-left: 40px;
+  
 
   .MB_title {
     @extend .MB_title;
   }
   .myCard{
+    // background: url(../login/登入圖.png) center center no-repeat;
     margin-left: 20px;
     margin-top: 50px;
+    border-radius: 10px;
     border: 1px solid #2d3a3a;
     box-shadow: 3px 3px 8px #2d3a3a;
 
@@ -623,8 +665,9 @@ $content: 24px;
 
   .list {
     // border: 1px solid #000;
-    width: 640px;
-    margin-top: 50px;
+    width: 540px;
+    // margin-top: 50px;
+    // margin-bottom: 50px;
     padding-left: 80px;
 
     .item {
@@ -640,19 +683,30 @@ $content: 24px;
   .list-r {
     // border: 1px solid #000;
     margin-top: 50px;
+    position: absolute;
+    right: 20px;
+    top: -57px;
+    width: 540px;
 
     .item {
-      height: 100px;
+      // height: 100px;
       // border: 1px solid #000;
-      width: 640px;
+      
       display: flex;
       justify-content: center;
       padding-top: 50px;
       /* border: 1px solid #000; */
     }
+    img{
+      width: 65px;
+      position: absolute;
+      bottom: -75px;
+      right: 35px;
+    }
 
     figure {
       // border: 1px solid #000;
+      margin-left: -60px;
       width: 300px;
       height: 300px;
       border-radius: 99em;

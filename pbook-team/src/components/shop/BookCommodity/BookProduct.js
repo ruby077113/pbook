@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import moment from 'moment'
 import { Tabs, Tab } from 'react-bootstrap'
 import Word from './Word'
@@ -9,7 +10,7 @@ const BookProduct = props => {
     props.bookInfoPayload &&
     props.bookInfoPayload.rows &&
     props.bookInfoPayload.rows[0]
-
+  let recommendBooksData = props.recommendBooks && props.recommendBooks.data
   return (
     <>
       <div className="BookProduct mt-5">
@@ -27,7 +28,35 @@ const BookProduct = props => {
           </span>
           <span className="mt-2"> 類別：{data && data.categoriesName}</span>
         </div>
-        <Tabs defaultActiveKey="content" id="uncontrolled-tab-example">
+        <div className="recommendBooks py-5">
+          <span className="title">推薦書籍</span>
+          <div className="d-flex justify-content-around my-3">
+            {recommendBooksData &&
+              recommendBooksData &&
+              recommendBooksData.map(recommendBooksData => (
+                <div className="recommend" key={recommendBooksData.sid}>
+                  <Link
+                    to={'/books/information/' + recommendBooksData.sid}
+                    target="blank"
+                  >
+                    <img
+                      src={
+                        'http://localhost:5555/images/books/' +
+                        recommendBooksData.pic
+                      }
+                      alt="品書封面"
+                    />
+                  </Link>
+                  <span>{recommendBooksData.name}</span>
+                </div>
+              ))}
+          </div>
+        </div>
+        <Tabs
+          defaultActiveKey="content"
+          id="uncontrolled-tab-example"
+          className="mt-5"
+        >
           <Tab eventKey="content" title="內容簡介" className="a">
             <Word></Word>
             <span

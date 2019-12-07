@@ -74,7 +74,6 @@ bluebird.promisifyAll(db)
 //     }
 //   });
 // ------------------------------------------------------------------
-
 //編輯部落格資料
 router.post('/brBlogEdit', (req, res, next)=>{
     let blog = req.body.blog
@@ -84,9 +83,34 @@ console.log('發送來的blog',blog,'發送來的sid',sid)
         if(err){ res.json(err) }
         res.json({
             status: "編輯成功",
-            message: "文章已經發佈了"
+            message: "文章內容已更新"
         })
     })
 })
-
+//按讚數
+router.post('/brLikeBook', (req, res, next)=>{
+    let likebook = req.body.likebook
+    let sid = req.body.sid
+console.log('發送來的按讚數',likebook,'發送來的sid',sid)
+    db.query(`UPDATE br_bookcase SET likebook = '${likebook}' WHERE br_bookcase.sid = '${sid}'`,(err, result)=>{
+        if(err){ res.json(err) }
+        res.json({
+            status: "按讚成功",
+            message: "按讚數已更新"
+        })
+    })
+})
+//閱讀數
+router.post('/brReadBook', (req, res, next)=>{
+    let readbook = req.body.readbook
+    let sid = req.body.sid
+console.log('發送來的按讚數',readbook,'發送來的sid',sid)
+    db.query(`UPDATE br_bookcase SET readbook = '${readbook}' WHERE br_bookcase.sid = '${sid}'`,(err, result)=>{
+        if(err){ res.json(err) }
+        res.json({
+            status: "閱讀成功",
+            message: "閱讀數已更新"
+        })
+    })
+})
 module.exports = router;

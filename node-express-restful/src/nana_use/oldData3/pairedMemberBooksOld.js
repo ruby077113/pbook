@@ -8,7 +8,7 @@ const _ = require("lodash"); //loadsh,處理數據的各種方法
 const mysql = require("mysql");
 // 設定資料庫連線
 const db = mysql.createConnection({
-    host:"localhost",
+    host:"192.168.27.186",
     user: "root",
     password: "root",
     database: "pbook"

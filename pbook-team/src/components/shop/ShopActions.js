@@ -1,5 +1,5 @@
-//-------categories--------
 import { getDiscountAmount } from '../../pages/activities/AcActions'
+//-------categories--------
 
 export const CATEGORIES_RECEIVE = 'CATEGORIES_RECEIVE'
 export const CATEGORIES_REQUEST = 'CATEGORIES_REQUEST'
@@ -80,8 +80,9 @@ export const shopFetch = (
     const json = await response.json()
     dispatch(shopReceive(shopPage, shopCategories, shopKeyword, json))
     const sids = json.rows.map(v => v.sid)
-    let memberLevel = JSON.parse(localStorage.getItem('user')).MR_personLevel
-    if (!memberLevel) memberLevel = 1
+    let memberLevel
+    if (!localStorage.getItem('user')) memberLevel = 1
+    else memberLevel = JSON.parse(localStorage.getItem('user')).MR_personLevel
     dispatch(getDiscountAmount(memberLevel, sids))
   } catch (error) {
     console.log('error ', error)
@@ -118,8 +119,9 @@ export const bookInfoFetch = sid => async dispatch => {
     const json = await response.json()
     dispatch(bookInfoReceive(sid, json))
     const sids = json.rows.map(v => v.sid)
-    let memberLevel = JSON.parse(localStorage.getItem('user')).MR_personLevel
-    if (!memberLevel) memberLevel = 1
+    let memberLevel
+    if (!localStorage.getItem('user')) memberLevel = 1
+    else memberLevel = JSON.parse(localStorage.getItem('user')).MR_personLevel
     dispatch(getDiscountAmount(memberLevel, sids))
   } catch (error) {
     console.log('error ', error)
@@ -129,26 +131,68 @@ export const bookInfoFetch = sid => async dispatch => {
 //-------ADD_TO_FAV--------
 export const ADD_TO_FAV_RECEIVE = 'ADD_TO_FAV_RECEIVE'
 export const ADD_TO_FAV_REQUEST = 'ADD_TO_FAV_REQUEST'
-function afReceive(memberID, isbn, json) {
+function afReceive(memberID, isbn, sid, json) {
   return {
     type: ADD_TO_FAV_RECEIVE,
+    memberID,
+    isbn,
+    sid,
+    payload: json,
+    receivedAt: Date.now(),
+  }
+}
+function afRequest(memberID, isbn, sid) {
+  return {
+    type: ADD_TO_FAV_REQUEST,
+    memberID,
+    isbn,
+    sid,
+  }
+}
+export const addToFavFetch = (memberID, isbn, sid) => async dispatch => {
+  dispatch(afRequest(memberID, isbn, sid))
+  try {
+    let response = await fetch('http://localhost:5555/member/addBookcase', {
+      method: 'POST',
+      body: JSON.stringify({
+        number: memberID,
+        isbn: isbn,
+        bookSid: sid,
+      }),
+      headers: new Headers({
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }),
+    })
+    dispatch(afReceive(memberID, isbn, sid, await response.json()))
+  } catch (error) {
+    console.log('error ', error)
+  }
+}
+//------------------------
+//-------DEL_FAV--------
+export const DEL_FAV_RECEIVE = 'DEL_FAV_RECEIVE'
+export const DEL_FAV_REQUEST = 'DEL_FAV_REQUEST'
+function dfReceive(memberID, isbn, json) {
+  return {
+    type: DEL_FAV_RECEIVE,
     memberID,
     isbn,
     payload: json,
     receivedAt: Date.now(),
   }
 }
-function afRequest(memberID, isbn) {
+function dfRequest(memberID, isbn) {
   return {
-    type: ADD_TO_FAV_REQUEST,
+    type: DEL_FAV_REQUEST,
     memberID,
     isbn,
   }
 }
-export const addToFavFetch = (memberID, isbn) => async dispatch => {
-  dispatch(afRequest(memberID, isbn))
+export const delFavFetch = (memberID, isbn) => async dispatch => {
+  dispatch(dfRequest(memberID, isbn))
   try {
-    let response = await fetch('http://localhost:5555/member/addBookcase', {
+    let response = await fetch('http://localhost:5555/member/removeBookcase', {
       method: 'POST',
       body: JSON.stringify({ number: memberID, isbn: isbn }),
       headers: new Headers({
@@ -156,7 +200,7 @@ export const addToFavFetch = (memberID, isbn) => async dispatch => {
         'Content-Type': 'application/json',
       }),
     })
-    dispatch(afReceive(memberID, isbn, await response.json()))
+    dispatch(dfReceive(memberID, isbn, await response.json()))
   } catch (error) {
     console.log('error ', error)
   }
@@ -471,6 +515,80 @@ export const reviewsFetch = sid => async dispatch => {
   }
 }
 //------------------------
+//-------Favorite-----------
+export const FAVORITE_RECEIVE = 'FAVORITE_RECEIVE'
+export const FAVORITE_REQUEST = 'FAVORITE_REQUEST'
+
+function favoriteReceive(member, json) {
+  return {
+    type: FAVORITE_RECEIVE,
+    member,
+    payload: json,
+    receivedAt: Date.now(),
+  }
+}
+function favoriteRequest(member) {
+  return {
+    type: FAVORITE_REQUEST,
+    member,
+  }
+}
+export const favoriteFetch = member => async dispatch => {
+  dispatch(favoriteRequest(member))
+  try {
+    let response = await fetch(
+      'http://localhost:5555/books/favorite/' + member,
+      {
+        method: 'GET',
+        headers: new Headers({
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        }),
+      }
+    )
+    dispatch(favoriteReceive(member, await response.json()))
+  } catch (error) {
+    console.log('error ', error)
+  }
+}
+//-------------------------
+//-------FAVORITENUM-----------
+export const FAVORITENUM_RECEIVE = 'FAVORITENUM_RECEIVE'
+export const FAVORITENUM_REQUEST = 'FAVORITENUM_REQUEST'
+
+function favoriteNumReceive(sid, json) {
+  return {
+    type: FAVORITENUM_RECEIVE,
+    sid,
+    payload: json,
+    receivedAt: Date.now(),
+  }
+}
+function favoriteNumRequest(sid) {
+  return {
+    type: FAVORITENUM_REQUEST,
+    sid,
+  }
+}
+export const favoriteNumFetch = sid => async dispatch => {
+  dispatch(favoriteNumRequest(sid))
+  try {
+    let response = await fetch(
+      'http://localhost:5555/books/favoriteNum/' + sid,
+      {
+        method: 'GET',
+        headers: new Headers({
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        }),
+      }
+    )
+    dispatch(favoriteNumReceive(sid, await response.json()))
+  } catch (error) {
+    console.log('error ', error)
+  }
+}
+//-------------------------
 export const ADD_CART_TO_ORDER = 'ADD_CART_TO_ORDER'
 export const addCartToOrder = (totalAmount, totalPrice) => {
   return {

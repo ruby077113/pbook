@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { useEffect } from 'react'
 import './acPageAside.scss'
 import { withRouter } from 'react-router'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
@@ -13,17 +13,66 @@ import AcSign from '../acSign/AcSign'
 
 const AcPageAside = props => {
   const [show, setShow] = React.useState(false)
+  const [like, setLike] = React.useState(false)
+  let userNum = localStorage.user
+    ? JSON.parse(localStorage.user).MR_number
+    : 'not login'
+  let acType = props.match.url.split('/')[2] === 'offline' ? 1 : 2
+  let acId = props.match.params.acId
+
+  useEffect(() => {
+    fetch(
+      'http://localhost:5555/activities/ac-like/' +
+        userNum +
+        '/' +
+        acType +
+        '/' +
+        acId
+    )
+      .then(response => response.json())
+      .then(result => {
+        setLike(!!result)
+      })
+      .catch(err => console.log('ac-like', err))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   function handleClickOpen() {
     setShow(true)
   }
   function handleClose() {
     setShow(false)
   }
+  function handleLike(event) {
+    let el = event.currentTarget
+    el.classList.toggle('like')
+    let toggle = el.classList.contains('like') ? 1 : 0
+    fetch(
+      'http://localhost:5555/activities/ac-like/' +
+        userNum +
+        '/' +
+        acType +
+        '/' +
+        acId +
+        '/' +
+        toggle
+    )
+      .then(response => response.json())
+      .then(result => {})
+      .catch(err => console.log('ac-like', err))
+  }
   return (
     <>
       <aside className="col-md-3 acPageAside">
         <span className="share d-flex mt-3 justify-content-around align-items-center">
-          <button className="py-2" title="收藏活動">
+          <button
+            className={'py-2 ' + (like ? 'like' : '')}
+            title="收藏活動"
+            onClick={e => {
+              e.stopPropagation()
+              handleLike(e)
+            }}
+          >
             <FavoriteBorderIcon />
           </button>
           <a
@@ -66,7 +115,7 @@ const AcPageAside = props => {
                   <iframe
                     title="map"
                     width="100%"
-                    height="200"
+                    height="250"
                     frameBorder="0"
                     scrolling="no"
                     marginHeight="0"

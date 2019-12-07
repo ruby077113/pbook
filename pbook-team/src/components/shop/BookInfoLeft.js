@@ -24,9 +24,17 @@ const BookInfoLeft = props => {
           >
             {props.data.name}
           </Link>
-          <span className="content_color mt-2 mb-1">
-            作者：{props.data.author} 出版社：{props.data.cp_name}
-          </span>
+          <div>
+            <Link
+              to={'/books/search/1/' + props.data.author}
+              className="content_color mt-2 mb-1"
+            >
+              作者：{props.data.author}
+            </Link>
+            <span className="content_color mt-2 mb-1 mx-3">
+              出版社：{props.data.cp_name}
+            </span>
+          </div>
           <span className="content_color mb-2">
             出版日期：
             {moment(props.data.publish_date).format('YYYY/MM/DD')}

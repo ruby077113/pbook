@@ -1,8 +1,19 @@
 @import '../../color.scss';
-.acTable {
-  .popover{
-    max-width: 625px;
+.acTableContainer {
+  .nav-tabs {
+    a {
+      color: darken($color-green, 30%);
+    }
+  }
+
+  color: $color-black;
+  .popover {
     width: 100%;
+    border: 1px solid darken($color-green, 5%);
+    max-width: 480px;
+    .popover-header {
+      background: $color-green;
+    }
   }
   .acTitle {
     cursor: pointer;
@@ -11,7 +22,18 @@
       color: $color-yellow;
       text-shadow: 1px 1px 1px $color-black;
       font-weight: 600;
-      background-color: lighten($color-green, 5%);
+    }
+    &::after {
+      display: block;
+      content: attr(title);
+      font-weight: 600;
+      text-shadow: 1px 1px 1px transparent;
+      height: 1px;
+      color: transparent;
+      overflow: hidden;
+      visibility: hidden;
+    }
+    .acTitleBold::after {
     }
   }
   .icon {
@@ -25,7 +47,7 @@
   }
 
   .table-striped tbody tr:nth-of-type(odd) {
-    background-color: lighten($color-green, 12%);
+    background-color: lighten($color-green, 13%);
   }
 }
 .swal-button--acDYes {

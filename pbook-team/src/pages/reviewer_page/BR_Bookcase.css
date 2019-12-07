@@ -11,9 +11,12 @@
 /* 按讚、閱讀，區塊控制 */
 .brLikeBox{
     position: absolute;
+    display: flex;
     right: 98px;
     top: 0;
-    margin: 10px 0;
+    margin: 8px 0;
+    min-height: 34px;
+    line-height: 34px;
 }
 /* 按讚、閱讀，間距調整 */
 .brMark_p{
@@ -81,7 +84,6 @@
     left: 50%;
     top: 63%;
     transform: translateX(-50%);
-    
 }
 /* 熱門書評，多本書區域 (圖片區塊) */
 .HotBookBox_Bookcase{
@@ -106,8 +108,8 @@
 /* 頭書，單本書區域 (圖片區) */
 .brAvatarAllBox_Bookcase{
     border-right:1px solid #2d3a3a;
+    min-width: 143px;
     max-width: 160px;
-    min-width: 80px;
     padding: 0 10px;
 }
 /* 頭書，單本書 (圖片) */
@@ -175,7 +177,6 @@
 .bookNameBox_Bookcase{
     display: flex;
     line-height: 40px;
-    height: 40px;
 }
 /* 書籍內容，書名 (文字)小) */
 .bookName_Bookcase{
@@ -240,8 +241,13 @@
 /* 書櫃列表，整體區域 ( 狀態變更 + 外框陰影 ) */
 .ReviewerListAllBox_Bookcase{
     display: flex;
+    margin-top: 30px;
     border: 1px solid #2d3a3a;
-    box-shadow: 3px 2px 6px #2d3a3a;
+    box-shadow: 1px 6px 6px rgba(45, 58, 58, 0.7);
+    transition: 0.3s;
+}
+.ReviewerListAllBox_Bookcase:nth-child(4){
+    margin-top: 0;
 }
 /* 書籍簡介，狀態預設隱藏 (書名、作者) */
 .bookInfoRWD{
@@ -292,5 +298,15 @@
     }
     .bookInfoRWD{
         display: block;
+    }
+    /* 熱門書評區域，整體區域 (區塊控制) */
+    .HotBookBoxAll_Bookcase{
+        padding: 20px 6px 0 6px;
+    }
+    .brHotBookText{
+        top: 120px;
+    }
+    .HotBookBox_Bookcase{
+        margin: 0 8px;
     }
 }

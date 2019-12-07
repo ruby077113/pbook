@@ -3,10 +3,10 @@
 .detail_wrapper {
   background-image: url('../../../images/bg.png');
   // height: 400vh;
-  .bread{
-    .linkTo{
+  .bread {
+    .linkTo {
       color: $color-black;
-      &:hover{
+      &:hover {
         text-decoration: underline;
       }
     }
@@ -93,6 +93,27 @@
     }
   }
   .BookProduct {
+    .recommendBooks {
+      border-top: 1px solid $color-gray;
+      text-align: center;
+      .title {
+        font-size: 2rem;
+      }
+      .recommend {
+        width: 10vw;
+        height: 10vw;
+        // overflow: hidden;
+        img {
+          transition: 0.2s;
+          object-fit: cover;
+          height: 100%;
+          width: 100%;
+          &:hover {
+            transform: scale(1.05);
+          }
+        }
+      }
+    }
     border-top: 1px solid $color-gray;
     .nav-tabs {
       border-bottom: 1px solid $color-gray;
@@ -161,29 +182,29 @@
       }
     }
   }
-  .bookReviews{
-    .title{
+  .bookReviews {
+    .title {
       border-bottom: 1px solid $color-gray;
       font-size: 1.5rem;
     }
-    .eachReview{
+    .eachReview {
       width: 100%;
       border-bottom: 1px solid $color-gray;
-      .memberImg{
+      .memberImg {
         width: 5vw;
         height: 5vw;
         border-radius: 50%;
         overflow: hidden;
-        img{
+        img {
           object-fit: cover;
           height: 100%;
           width: 100%;
         }
       }
-      .date{
+      .date {
         color: $color-gray;
       }
-      .content{
+      .content {
         height: 7vw;
       }
     }

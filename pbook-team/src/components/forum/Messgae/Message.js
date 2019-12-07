@@ -142,7 +142,7 @@ const MessageChild = props => {
   }, [])
 
   const handleResponseLike = sid => {
-    let node = document.querySelector('.thumb-sm')
+    let node = document.querySelector(`#thumb-sm${sid}`)
     fetch(`http://localhost:5555/forum/article/responseLike/${sid}/${like}`, {
       method: 'GET',
     })
@@ -186,6 +186,7 @@ const MessageChild = props => {
         <div className="social-area2">
           <div
             className="dis-flex thumb-sm"
+            id={`thumb-sm${props.sid}`}
             onClick={() => handleResponseLike(props.sid)}
           >
             <div className="thumb-frame">

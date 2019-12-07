@@ -162,13 +162,16 @@
         #email {
           @extend #name;
         }
-        #code {
-          @extend #name;
-          width: 10%;
-        }
+        // #code {
+        //   @extend #name;
+        //   width: 10%;
+        // }
         #address {
           @extend #name;
-          width: 90%;
+          // width: 90%;
+        }
+        .color-red {
+          color: $color-red;
         }
       }
     }
@@ -243,5 +246,4 @@
       }
     }
   }
-  
 }

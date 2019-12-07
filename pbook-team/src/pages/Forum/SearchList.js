@@ -21,7 +21,7 @@ function SearchList(props) {
       .then(res => res.json())
       .then(results => {
         if (keyWord === 'featured') {
-          console.log(results)
+          // console.log(results)
           setData(results.featured)
         } else {
           setData(results)

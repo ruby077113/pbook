@@ -1,14 +1,24 @@
 @import '../../color.scss';
 
 .book_box {
+  figure {
+    transition: 0.3s;
+    &:hover {
+      img {
+        transform: scale(1.05);
+      }
+    }
+  }
   .book_pic {
     position: relative;
+    overflow: hidden;
     &:after {
       padding-top: 100%;
       display: block;
       content: '';
     }
     img {
+      transition: .3s;
       position: absolute;
       width: 100%;
       height: 100%;
@@ -54,7 +64,7 @@
   }
   a {
     color: $color-gray;
-    .fixedPrice{
+    .fixedPrice {
       display: block;
     }
     .price {
@@ -67,8 +77,14 @@
     border-radius: 8px;
     padding: 3px;
     font-size: 1rem;
-    &:focus {
+    &:focus,
+    &:hover {
+      text-shadow: 1px 1px 2px $color-green;
       outline: none;
+      border: 1px solid $color-green;
+      background: lighten($color-green, 5px);
+      outline: none;
+      box-shadow: inset 0px 0px 5px $color-green;
     }
   }
 }

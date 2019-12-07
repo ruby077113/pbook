@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ckeditor/ckeditor5-build-balloon-block": "^15.0.0",
     "@ckeditor/ckeditor5-build-classic": "^15.0.0",
     "@ckeditor/ckeditor5-build-decoupled-document": "^15.0.0",
+    "@ckeditor/ckeditor5-build-inline": "^15.0.0",
     "@ckeditor/ckeditor5-dev-webpack-plugin": "^8.0.5",
+    "@ckeditor/ckeditor5-editor-balloon": "^15.0.0",
+    "@ckeditor/ckeditor5-media-embed": "^15.0.0",
     "@ckeditor/ckeditor5-react": "^2.0.0",
     "@emotion/core": "^10.0.22",
     "@emotion/styled": "^10.0.23",
@@ -69,6 +73,7 @@
     "sweetalert": "^2.1.2",
     "sweetalert2": "^9.3.13",
     "sweetalert2-react": "^0.8.3",
+    "swr": "^0.1.12",
     "unsplash-js": "^6.0.0",
     "wowjs": "^1.1.3"
   },

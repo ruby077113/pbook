@@ -148,7 +148,7 @@
   display: none !important;
 }
 
-.chatWrap .row{
+.chatWrap .row {
   margin-right: 0px;
   margin-left: 0px;
 }
@@ -308,13 +308,13 @@
   border-radius: 50%;
 }
 
-.memoIcon{
+.memoIcon {
   line-height: 60px;
-  margin:0px 8px;
-  color:#999;
+  margin: 0px 8px;
+  color: #999;
 }
 
-.memoIcon:hover{
+.memoIcon:hover {
   cursor: pointer;
   color: black;
 }
@@ -327,30 +327,41 @@
   -webkit-box-orient: vertical;
 }
 
-.insertMemoTextarea{
+.insertMemoTextarea {
   width: 99.5%;
   height: 35vh;
 }
 
-.block{
+.block {
   display: block;
 }
 
-.hide{
+.hide {
   display: hide;
 }
 
-.addToAlbum{
+.addToAlbum {
   color: #fff;
   text-align: right;
   margin: 0 10px;
   position: absolute;
-  top:0px;
-  right:0px;
+  top: 0px;
+  right: 0px;
 }
 
-.addToAlbum:hover{
+.addToAlbum:hover {
   color: #ffc408;
+}
+
+.downloadImg {
+  color: #fff;
   text-align: right;
   margin: 0 10px;
+  position: absolute;
+  top: 0px;
+  right: 20px;
+}
+
+.downloadImg:hover {
+  color: #ffc408;
 }

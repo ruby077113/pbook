@@ -191,6 +191,7 @@ const ArticleContent = props => {
     }
   }
   //喜歡文章
+  
   const handleClickArticleLike = () => {
     let node = document.querySelector('.thumb')
     fetch(`http://localhost:5555/forum/article/like/${articleId}/${like}`)
